@@ -9,12 +9,12 @@
 import Foundation
 
 
-enum Promise2Result<T> {
+public enum Promise2Result<T> {
 	case Ready(T)
 	case Cancel
 	case Error(ErrorType)
 
-	var value: T? {
+	public var value: T? {
 		get {
 			switch self {
 			case .Ready(let value):	return 	value
@@ -22,7 +22,7 @@ enum Promise2Result<T> {
 			}
 		}
 	}
-	var error: ErrorType? {
+	public var error: ErrorType? {
 		get {
 			switch self {
 			case .Error(let error):	return 	error
@@ -30,12 +30,12 @@ enum Promise2Result<T> {
 			}
 		}
 	}
-	var isReady: Bool {
+	public var isReady: Bool {
 		get {
 			return	value != nil
 		}
 	}
-	var isCancel: Bool {
+	public var isCancel: Bool {
 		get {
 			switch self {
 			case .Cancel:		return 	true
@@ -43,12 +43,12 @@ enum Promise2Result<T> {
 			}
 		}
 	}
-	var isError: Bool {
+	public var isError: Bool {
 		get {
 			return	error != nil
 		}
 	}
-	func map<U>(map: T throws ->U) -> Promise2Result<U> {
+	public func map<U>(map: T throws ->U) -> Promise2Result<U> {
 		switch self {
 		case .Cancel:		return	.Cancel
 		case .Error(let error):	return	.Error(error)
@@ -75,8 +75,8 @@ enum Promise2Result<T> {
 /// So you don't need to keep them yourself. Anyway, you
 /// still can `cancel` those subromises. Cancelling subpromise
 /// won't affect any other promises.
-class Promise2<T> {
-	init(notify: (Promise2Result<T>->())->(), cancel: ()->()) {
+public class Promise2<T> {
+	public init(notify: (Promise2Result<T>->())->(), cancel: ()->()) {
 		notify { [weak self] in
 			self?.result = $0
 		}
@@ -92,7 +92,7 @@ class Promise2<T> {
 	// MARK: -
 
 	/// `nil` until promise operation finishes.
-	private(set) var result: Promise2Result<T>? {
+	public private(set) var result: Promise2Result<T>? {
 		willSet {
 			precondition(result == nil, "This promise `\(self)` already been finished with result `\(result)`.")
 		}
@@ -110,13 +110,13 @@ class Promise2<T> {
 	/// All promise observers will receive `.Cancel` result immediately.
 	/// All subpromises derived from this promise will also be cancelled
 	/// immediately.
-	func cancel() {
+	public func cancel() {
 		result = Promise2Result.Cancel
 	}
-//	func wait() {
+//	public func wait() {
 //	}
 
-	func resultInMainThread(onResult: Promise2Result<T>->()) -> Promise2<()> {
+	public func resultInMainThread(onResult: Promise2Result<T>->()) -> Promise2<()> {
 		let sink = { (superResult: Promise2Result<T>) -> Promise2Result<()> in
 			print(superResult)
 			onResult(superResult)
@@ -126,12 +126,12 @@ class Promise2<T> {
 	}
 	/// - Parameter map:	Maps a ready value `T` into `U` in main thread.
 	///			`Result.Error` will be passed on any error.
-	func mapInMainThread<U>(map: T throws ->U) -> Promise2<U> {
+	public func mapInMainThread<U>(map: T throws ->U) -> Promise2<U> {
 		return	_map({ $0.map(map) }, inQueue: GCDUtility.mainThreadQueue())
 	}
 	/// - Parameter map:	Maps a ready value `T` into `U` in non-main thread.
 	///			`Result.Error` will be passed on any error.
-	func mapInNonMainThread<U>(map: T throws ->U) -> Promise2<U> {
+	public func mapInNonMainThread<U>(map: T throws ->U) -> Promise2<U> {
 		return	_map({ $0.map(map) }, inQueue: GCDUtility.nonMainThreadQueue())
 	}
 

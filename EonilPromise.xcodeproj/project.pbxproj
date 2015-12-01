@@ -12,7 +12,6 @@
 		459A37ED1C0E207C00E7479B /* EonilPromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37EC1C0E207C00E7479B /* EonilPromiseTests.swift */; };
 		459A37FA1C0E20B200E7479B /* Promise2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37F71C0E20B200E7479B /* Promise2.swift */; };
 		459A37FB1C0E20B200E7479B /* Promise2Holder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37F81C0E20B200E7479B /* Promise2Holder.swift */; };
-		459A37FC1C0E20B200E7479B /* PromiseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37F91C0E20B200E7479B /* PromiseController.swift */; };
 		459A37FE1C0E20C000E7479B /* GCDUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37FD1C0E20C000E7479B /* GCDUtility.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,8 +34,9 @@
 		459A37EE1C0E207C00E7479B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		459A37F71C0E20B200E7479B /* Promise2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise2.swift; sourceTree = "<group>"; };
 		459A37F81C0E20B200E7479B /* Promise2Holder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise2Holder.swift; sourceTree = "<group>"; };
-		459A37F91C0E20B200E7479B /* PromiseController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseController.swift; sourceTree = "<group>"; };
 		459A37FD1C0E20C000E7479B /* GCDUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDUtility.swift; sourceTree = "<group>"; };
+		459A37FF1C0E21A600E7479B /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		459A38001C0E21A600E7479B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +61,8 @@
 		459A37D31C0E207C00E7479B = {
 			isa = PBXGroup;
 			children = (
+				459A37FF1C0E21A600E7479B /* LICENSE */,
+				459A38001C0E21A600E7479B /* README.md */,
 				459A37DF1C0E207C00E7479B /* EonilPromise */,
 				459A37EB1C0E207C00E7479B /* EonilPromiseTests */,
 				459A37DE1C0E207C00E7479B /* Products */,
@@ -82,7 +84,6 @@
 				459A37E01C0E207C00E7479B /* EonilPromise.h */,
 				459A37F71C0E20B200E7479B /* Promise2.swift */,
 				459A37F81C0E20B200E7479B /* Promise2Holder.swift */,
-				459A37F91C0E20B200E7479B /* PromiseController.swift */,
 				459A37FD1C0E20C000E7479B /* GCDUtility.swift */,
 				459A37E21C0E207C00E7479B /* Info.plist */,
 			);
@@ -206,7 +207,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				459A37FC1C0E20B200E7479B /* PromiseController.swift in Sources */,
 				459A37FE1C0E20C000E7479B /* GCDUtility.swift in Sources */,
 				459A37FB1C0E20B200E7479B /* Promise2Holder.swift in Sources */,
 				459A37FA1C0E20B200E7479B /* Promise2.swift in Sources */,
@@ -395,6 +395,7 @@
 				459A37F31C0E207C00E7479B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		459A37F41C0E207C00E7479B /* Build configuration list for PBXNativeTarget "EonilPromiseTests" */ = {
 			isa = XCConfigurationList;
@@ -403,6 +404,7 @@
 				459A37F61C0E207C00E7479B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

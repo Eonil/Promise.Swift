@@ -9,8 +9,8 @@
 import Foundation
 
 /// Keeps strong reference to promises until it finishes.
-class Promise2Holder {
-	func holdUntilDone<T>(promise: Promise2<T>) {
+public class Promise2Holder {
+	public func holdUntilDone<T>(promise: Promise2<T>) {
 		precondition(NSThread.isMainThread())
 		let id = ObjectIdentifier(promise)
 		_promises[id] = promise
