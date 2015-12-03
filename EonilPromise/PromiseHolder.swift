@@ -1,5 +1,5 @@
 //
-//  Promise2Holder.swift
+//  PromiseHolder.swift
 //  EonilPromise
 //
 //  Created by Hoon H. on 2015/12/01.
@@ -9,14 +9,14 @@
 import Foundation
 
 /// Keeps strong reference to promises until it finishes.
-public class Promise2Holder {
+public class PromiseHolder {
 	public init() {
 	}
-	public func holdUntilDone<T>(promise: Promise2<T>) {
+	public func holdUntilDone<T>(promise: Promise<T>) {
 		precondition(NSThread.isMainThread())
 		let id = ObjectIdentifier(promise)
 		_promises[id] = promise
-		promise.resultInMainThread { [weak self] (result: Promise2Result<T>) -> () in
+		promise.resultInMainThread { [weak self] (result: PromiseResult<T>) -> () in
 			guard self != nil else {
 				return
 			}

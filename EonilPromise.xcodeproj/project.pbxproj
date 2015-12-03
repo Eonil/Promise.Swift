@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		454D78001C0FC62F006399F2 /* PromiseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D77FF1C0FC62F006399F2 /* PromiseResult.swift */; };
+		454D78061C0FC995006399F2 /* Cancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D78051C0FC995006399F2 /* Cancellable.swift */; };
+		454D78081C0FCD71006399F2 /* PromiseKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D78071C0FCD70006399F2 /* PromiseKeeper.swift */; };
 		459A37E11C0E207C00E7479B /* EonilPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 459A37E01C0E207C00E7479B /* EonilPromise.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		459A37E81C0E207C00E7479B /* EonilPromise.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 459A37DD1C0E207C00E7479B /* EonilPromise.framework */; };
 		459A37ED1C0E207C00E7479B /* EonilPromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37EC1C0E207C00E7479B /* EonilPromiseTests.swift */; };
-		459A37FA1C0E20B200E7479B /* Promise2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37F71C0E20B200E7479B /* Promise2.swift */; };
-		459A37FB1C0E20B200E7479B /* Promise2Holder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37F81C0E20B200E7479B /* Promise2Holder.swift */; };
+		459A37FA1C0E20B200E7479B /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37F71C0E20B200E7479B /* Promise.swift */; };
+		459A37FB1C0E20B200E7479B /* PromiseHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37F81C0E20B200E7479B /* PromiseHolder.swift */; };
 		459A37FE1C0E20C000E7479B /* GCDUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37FD1C0E20C000E7479B /* GCDUtility.swift */; };
 /* End PBXBuildFile section */
 
@@ -26,14 +29,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		454D77FF1C0FC62F006399F2 /* PromiseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseResult.swift; sourceTree = "<group>"; };
+		454D78051C0FC995006399F2 /* Cancellable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cancellable.swift; sourceTree = "<group>"; };
+		454D78071C0FCD70006399F2 /* PromiseKeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseKeeper.swift; sourceTree = "<group>"; };
 		459A37DD1C0E207C00E7479B /* EonilPromise.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EonilPromise.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		459A37E01C0E207C00E7479B /* EonilPromise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EonilPromise.h; sourceTree = "<group>"; };
 		459A37E21C0E207C00E7479B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		459A37E71C0E207C00E7479B /* EonilPromiseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EonilPromiseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		459A37EC1C0E207C00E7479B /* EonilPromiseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EonilPromiseTests.swift; sourceTree = "<group>"; };
 		459A37EE1C0E207C00E7479B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		459A37F71C0E20B200E7479B /* Promise2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise2.swift; sourceTree = "<group>"; };
-		459A37F81C0E20B200E7479B /* Promise2Holder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise2Holder.swift; sourceTree = "<group>"; };
+		459A37F71C0E20B200E7479B /* Promise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
+		459A37F81C0E20B200E7479B /* PromiseHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseHolder.swift; sourceTree = "<group>"; };
 		459A37FD1C0E20C000E7479B /* GCDUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDUtility.swift; sourceTree = "<group>"; };
 		459A37FF1C0E21A600E7479B /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		459A38001C0E21A600E7479B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -82,8 +88,11 @@
 			isa = PBXGroup;
 			children = (
 				459A37E01C0E207C00E7479B /* EonilPromise.h */,
-				459A37F71C0E20B200E7479B /* Promise2.swift */,
-				459A37F81C0E20B200E7479B /* Promise2Holder.swift */,
+				459A37F71C0E20B200E7479B /* Promise.swift */,
+				454D77FF1C0FC62F006399F2 /* PromiseResult.swift */,
+				454D78071C0FCD70006399F2 /* PromiseKeeper.swift */,
+				459A37F81C0E20B200E7479B /* PromiseHolder.swift */,
+				454D78051C0FC995006399F2 /* Cancellable.swift */,
 				459A37FD1C0E20C000E7479B /* GCDUtility.swift */,
 				459A37E21C0E207C00E7479B /* Info.plist */,
 			);
@@ -207,9 +216,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				454D78061C0FC995006399F2 /* Cancellable.swift in Sources */,
+				454D78081C0FCD71006399F2 /* PromiseKeeper.swift in Sources */,
 				459A37FE1C0E20C000E7479B /* GCDUtility.swift in Sources */,
-				459A37FB1C0E20B200E7479B /* Promise2Holder.swift in Sources */,
-				459A37FA1C0E20B200E7479B /* Promise2.swift in Sources */,
+				459A37FB1C0E20B200E7479B /* PromiseHolder.swift in Sources */,
+				454D78001C0FC62F006399F2 /* PromiseResult.swift in Sources */,
+				459A37FA1C0E20B200E7479B /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
