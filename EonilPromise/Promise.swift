@@ -61,10 +61,8 @@ public class Promise<T> {
 	/// Take care that super-promises won't be cancelled by this call.
 	/// If you want to cancel a super-promise, you should find and cancel
 	/// it explicitly from `superpromise` chain.
-	public func cancel() {
+	public final func cancel() {
 		assertMainThread()
-		onCancel?()
-		onCancel = nil
 		result = .Cancel
 	}
 
@@ -77,6 +75,10 @@ public class Promise<T> {
 			precondition(result == nil, "You can set `result` only once.")
 		}
 		didSet {
+			if result!.isCancel {
+				onCancel?()
+				onCancel = nil
+			}
 			for continuation in continuationQueue {
 				continuation()
 			}
@@ -85,7 +87,11 @@ public class Promise<T> {
 	}
 
 	/// A closure to be called on cancellation.
-	internal var onCancel: (()->())?
+	internal var onCancel: (()->())? {
+		willSet {
+			precondition(onCancel == nil)
+		}
+	}
 
 	/// Chains a continuation promise.
 	/// - Parameter coninuation:
@@ -103,7 +109,7 @@ public class Promise<T> {
 	/// - Note:
 	///	All other `then~` methods will and SHOULD ultimately call this method to
 	///	provide proper handling of continuation.
-	public func then<U>(continuation: PromiseResult<T> -> Promise<U>) -> Promise<U> {
+	public final func then<U>(continuation: PromiseResult<T> -> Promise<U>) -> Promise<U> {
 		assertMainThread()
 		let subpromise = Promise<U>()
 //		subpromise.superpromise = self
@@ -131,24 +137,6 @@ public class Promise<T> {
 			}
 		}
 		return subpromise
-	}
-	public func then<U>(continuation: (result: PromiseResult<T>, onComplete: (result: PromiseResult<U>) -> ()) -> ()) -> Promise<U> {
-		return then({ (result: PromiseResult<T>) -> Promise<U> in
-			let subpromise = Promise<U>()
-			let onComplete = { subpromise.result = $0 }
-			continuation(result: result, onComplete: onComplete)
-			return subpromise
-		})
-	}
-	public func then<U>(continuation: (value: T, onComplete: (PromiseResult<U>) -> ()) -> ()) -> Promise<U> {
-		return then({ (value: T) -> Promise<U> in
-			let subpromise = Promise<U>()
-			let onComplete = { (result: PromiseResult<U>) -> () in
-				subpromise.result = result
-			}
-			continuation(value: value, onComplete: onComplete)
-			return subpromise
-		})
 	}
 
 	// MARK: -

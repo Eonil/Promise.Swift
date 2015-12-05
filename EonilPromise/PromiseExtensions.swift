@@ -68,6 +68,80 @@ public extension Promise {
 			}
 		})
 	}
+
+//	public func then<U>(continuation: (result: PromiseResult<T>, onComplete: (result: PromiseResult<U>) -> ()) -> ()) -> Promise<U> {
+//		return then({ (result: PromiseResult<T>) -> Promise<U> in
+//			let subpromise = Promise<U>()
+//			let onComplete = { subpromise.result = $0 }
+//			continuation(result: result, onComplete: onComplete)
+//			return subpromise
+//		})
+//	}
+//	public func then<U>(continuation: (value: T, onComplete: (PromiseResult<U>) -> ()) -> ()) -> Promise<U> {
+//		return then({ (value: T) -> Promise<U> in
+//			let subpromise = Promise<U>()
+//			let onComplete = { (result: PromiseResult<U>) -> () in
+//				subpromise.result = result
+//			}
+//			continuation(value: value, onComplete: onComplete)
+//			return subpromise
+//		})
+//	}
+}
+
+extension Promise {
+	/// Waits unconditionally. This always wait even on error or cancel.
+	func thenWaitAlways(durationInSeconds: NSTimeInterval) -> Promise<T> {
+		return thenWaitConditionally(durationInSeconds, condition: { _ in
+			return true
+		})
+	}
+	/// Waits only on ready state. Doesn't wait on error or cancel.
+	func thenWaitOnReady(durationInSeconds: NSTimeInterval) -> Promise<T> {
+		return thenWaitConditionally(durationInSeconds, condition: { (result: PromiseResult<T>) -> Bool in
+			switch result {
+			case .Ready:	return true
+			default:	return false
+			}
+		})
+	}
+	/// Waits only on ready state. Doesn't wait on error or cancel.
+	func thenWaitOnError(durationInSeconds: NSTimeInterval) -> Promise<T> {
+		return thenWaitConditionally(durationInSeconds, condition: { (result: PromiseResult<T>) -> Bool in
+			switch result {
+			case .Error:	return true
+			default:	return false
+			}
+		})
+	}
+	/// Waits only on ready state. Doesn't wait on error or cancel.
+	func thenWaitOnCancel(durationInSeconds: NSTimeInterval) -> Promise<T> {
+		return thenWaitConditionally(durationInSeconds, condition: { (result: PromiseResult<T>) -> Bool in
+			switch result {
+			case .Cancel:	return true
+			default:	return false
+			}
+		})
+	}
+	/// Waits conditionally.
+	func thenWaitConditionally(durationInSeconds: NSTimeInterval, condition: PromiseResult<T> -> Bool) -> Promise<T> {
+		return then({ (result: PromiseResult<T>) -> Promise<T> in
+			guard condition(result) else {
+				return Promise(result: result)
+			}
+			let subpromise = Promise<T>()
+			let time = dispatch_time(DISPATCH_TIME_NOW, Int64(durationInSeconds * NSTimeInterval(NSEC_PER_SEC)))
+			dispatch_after(time, GCDUtility.mainThreadQueue()) {
+				if subpromise.result != nil && subpromise.result!.isCancel {
+					return
+				}
+				subpromise.result = result
+			}
+			return subpromise
+		})
+	}
+}
+extension Promise {
 	public func thenExecuteUnstoppableOperationInNonMainThread<U>(unstoppableNonMainThreadOperation: PromiseResult<T>->PromiseResult<U>) -> Promise<U> {
 		return then { (result: PromiseResult<T>) -> Promise<U> in
 			let subpromise = Promise<U>()
@@ -93,38 +167,60 @@ public extension Promise {
 			}
 		}
 	}
+	public func thenExecuteUnstoppableOperationInNonMainThread<U>(unstoppableNonMainThreadOperation: T throws -> U) -> Promise<U> {
+		return thenExecuteUnstoppableOperationInNonMainThread { (result: PromiseResult<T>) -> PromiseResult<U> in
+			switch result {
+			case .Ready(let value):
+				do {
+					return .Ready(try unstoppableNonMainThreadOperation(value))
+				}
+				catch let error {
+					return .Error(error)
+				}
+			case .Error(let error):
+				return .Error(error)
+			case .Cancel:
+				return .Cancel
+			}
+		}
+	}
 }
 
 public enum PromiseNSURLRequestError: ErrorType {
 	case CompleteWithNoErrorAndNoData(request: NSURLRequest, response: NSURLResponse?)
 }
-public extension Promise where T: NSURLRequest {
-	public func thenExecuteNSURLSessionDataTask() -> Promise<NSData> {
+public extension Promise {
+	public func thenExecuteNSURLSessionDataTask(continuation: T throws -> NSURLRequest) -> Promise<NSData> {
 		return then { (value: T) -> Promise<NSData> in
 			let subpromise = Promise<NSData>()
-			let request = value
-			let onComplete = { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
-				if let error = error {
-					if error.code == NSURLErrorCancelled {
-						subpromise.result = .Cancel
+			do {
+				let request = try continuation(value)
+				let onComplete = { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
+					if let error = error {
+						if error.code == NSURLErrorCancelled {
+							subpromise.result = .Cancel
+							return
+						}
+						subpromise.result = .Error(error)
 						return
 					}
+					if let data = data {
+						subpromise.result = .Ready(data)
+						return
+					}
+					let error = PromiseNSURLRequestError.CompleteWithNoErrorAndNoData(request: request, response: response)
 					subpromise.result = .Error(error)
 					return
 				}
-				if let data = data {
-					subpromise.result = .Ready(data)
-					return
+				let task = NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: onComplete)
+				subpromise.onCancel = { [task] in
+					task.cancel()
 				}
-				let error = PromiseNSURLRequestError.CompleteWithNoErrorAndNoData(request: request, response: response)
+				task.resume()
+			}
+			catch let error {
 				subpromise.result = .Error(error)
-				return
 			}
-			let task = NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: onComplete)
-			subpromise.onCancel = { [task] in
-				task.cancel()
-			}
-			task.resume()
 			return subpromise
 		}
 	}

@@ -41,18 +41,39 @@ extension EonilPromiseTests {
 		Promise(value: ()).thenExecuteUnstoppableOperationInNonMainThread { () -> PromiseResult<Int> in
 			sleep(1)
 			return .Ready(111)
-			}.then { (value: Int) -> Promise<()> in
+			} .then { (value: Int) -> Promise<()> in
 				sleep(1)
 				if value == 111 {
 					exp.fulfill()
 				}
 				return Promise(value: ())
 		}
+
+
 		waitForExpectationsWithTimeout(10, handler: { error in
 			XCTAssert(error == nil)
 			XCTAssert(promiseInstanceCount == 0)
-			return ()
 		})
+	}
+	func test2() {
+		let exp = expectationWithDescription("A")
+		Promise(value: ()).thenWaitAlways(2).then {
+			exp.fulfill()
+		}
+		waitForExpectationsWithTimeout(10) { error in
+			XCTAssert(error == nil)
+			XCTAssert(promiseInstanceCount == 0)
+		}
+	}
+	func test3() {
+		let exp = expectationWithDescription("A")
+		Promise(value: ()).thenWaitAlways(1).thenWaitAlways(1).then {
+			exp.fulfill()
+		}
+		waitForExpectationsWithTimeout(10) { error in
+			XCTAssert(error == nil)
+			XCTAssert(promiseInstanceCount == 0)
+		}
 	}
 }
 

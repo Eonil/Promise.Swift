@@ -17,6 +17,7 @@
 		459C73A11C12A64400FE2DDF /* PromiseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459C73A01C12A64400FE2DDF /* PromiseResult.swift */; };
 		459C73A31C12A65D00FE2DDF /* PromiseResultExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459C73A21C12A65D00FE2DDF /* PromiseResultExtensions.swift */; };
 		459C73A51C12A9CA00FE2DDF /* PromiseUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459C73A41C12A9CA00FE2DDF /* PromiseUtility.swift */; };
+		459C73A71C12C37700FE2DDF /* MutablePromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459C73A61C12C37700FE2DDF /* MutablePromise.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 		459C73A01C12A64400FE2DDF /* PromiseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseResult.swift; sourceTree = "<group>"; };
 		459C73A21C12A65D00FE2DDF /* PromiseResultExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseResultExtensions.swift; sourceTree = "<group>"; };
 		459C73A41C12A9CA00FE2DDF /* PromiseUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseUtility.swift; sourceTree = "<group>"; };
+		459C73A61C12C37700FE2DDF /* MutablePromise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutablePromise.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 				459C73A01C12A64400FE2DDF /* PromiseResult.swift */,
 				459C73A21C12A65D00FE2DDF /* PromiseResultExtensions.swift */,
 				459C73A41C12A9CA00FE2DDF /* PromiseUtility.swift */,
+				459C73A61C12C37700FE2DDF /* MutablePromise.swift */,
 				459C73981C129FFA00FE2DDF /* UtilityFunctions.swift */,
 				459C73991C129FFA00FE2DDF /* GCDUtility.swift */,
 				459A37E21C0E207C00E7479B /* Info.plist */,
@@ -219,6 +222,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				459C73A71C12C37700FE2DDF /* MutablePromise.swift in Sources */,
 				459C73A51C12A9CA00FE2DDF /* PromiseUtility.swift in Sources */,
 				459C73A31C12A65D00FE2DDF /* PromiseResultExtensions.swift in Sources */,
 				459C739C1C129FFA00FE2DDF /* UtilityFunctions.swift in Sources */,
