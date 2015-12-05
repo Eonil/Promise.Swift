@@ -118,7 +118,7 @@ extension EonilPromiseTests {
 		}
 		XCTAssert(promiseInstanceCount == 0)
 	}
-	func test5() {
+	func test5_killSuperpromiseBeforeConcludingSubpromise	() {
 		let exp = expectationWithDescription("A")
 		class MBOX {
 			var p2: MutablePromise<()>?
@@ -128,12 +128,12 @@ extension EonilPromiseTests {
 		mbox.p2 = MutablePromise<()>()
 		mbox.p2!.thenWaitAlways(0.1).then { 
 			XCTAssert(mbox.ok)
-			mbox.p2 = nil
 			exp.fulfill()
 		}
 		GCDUtility.delayAndContinueInMainThreadAsynchronously(0.1) {
 			mbox.ok = true
 			mbox.p2!.result = .Ready(())
+			mbox.p2 = nil
 		}
 		waitForExpectationsWithTimeout(1) { error in
 			XCTAssert(mbox.p2 == nil)
