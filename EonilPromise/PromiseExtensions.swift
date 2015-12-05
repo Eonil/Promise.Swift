@@ -8,21 +8,6 @@
 
 import Foundation
 
-public extension PromiseResult {
-	public func map<U>(map: T throws ->U) -> PromiseResult<U> {
-		switch self {
-		case .Cancel:		return	.Cancel
-		case .Error(let error):	return	.Error(error)
-		case .Ready(let value):	do {
-			let value1 = try map(value)
-			return .Ready(value1)
-		}
-		catch let error {
-			return	.Error(error)
-			}
-		}
-	}
-}
 public extension Promise {
 	public convenience init(result: PromiseResult<T>) {
 		self.init()
@@ -48,15 +33,18 @@ public extension Promise {
 		}
 	}
 }
+
 //public extension Promise {
 //	/// Also cancels specified promise when this promise cancels.
-//	public func alsoCancelsIfUnconcluded<U>(promise: Promise<U>) {
+//	public func <U>(promise: Promise<U>) {
+//		// This is an a bit optimized implementation.
+//		// This also can be implemented using `then` chaining.
 //		let oldOnCancel = onCancel
-//		onCancel = {
+//		onCancel = { [weak promise] in
 //			oldOnCancel?()
-//			if promise.result == nil {
-//				promise.cancel()
-//			}
+//			guard let promise = promise else { return }
+//			guard promise.result == nil else { return }
+//			promise.cancel()
 //		}
 //	}
 //}
@@ -107,11 +95,11 @@ public extension Promise {
 	}
 }
 
-enum PromiseNSURLRequestError: ErrorType {
+public enum PromiseNSURLRequestError: ErrorType {
 	case CompleteWithNoErrorAndNoData(request: NSURLRequest, response: NSURLResponse?)
 }
-extension Promise where T: NSURLRequest {
-	public func thenExecuteNSURLSessionDataTask(request: NSURLRequest) -> Promise<NSData> {
+public extension Promise where T: NSURLRequest {
+	public func thenExecuteNSURLSessionDataTask() -> Promise<NSData> {
 		return then { (value: T) -> Promise<NSData> in
 			let subpromise = Promise<NSData>()
 			let request = value
@@ -141,6 +129,31 @@ extension Promise where T: NSURLRequest {
 		}
 	}
 }
+
+
+//public protocol CancellableTaskType {
+//	typealias Value
+//	func run(onSuccess onSuccess: Value->(), onFailure: ErrorType->())
+//	func cancel()
+//}
+//public extension Promise {
+//	public func thenExecuteCancellableTask<U: CancellableTaskType>(task: U) -> Promise<U.Value> {
+//		let subpromise = Promise<U.Value>()
+//		let onSuccess = { (value: U.Value) -> () in
+//			subpromise.result = .Ready(value)
+//		}
+//		let onFailure = { (error: ErrorType) -> () in
+//			subpromise.result = .Error(error)
+//		}
+//		task.run(onSuccess: onSuccess, onFailure: onFailure)
+//		subpromise.onCancel = { task.cancel() }
+//		return subpromise
+//	}
+//}
+
+
+
+
 
 
 

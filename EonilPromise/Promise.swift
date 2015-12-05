@@ -64,6 +64,7 @@ public class Promise<T> {
 	public func cancel() {
 		assertMainThread()
 		onCancel?()
+		onCancel = nil
 		result = .Cancel
 	}
 
@@ -90,6 +91,8 @@ public class Promise<T> {
 	/// - Parameter coninuation:
 	///	Takes result of current promise and produces an "intermediate promise".
 	///	`continuation` is responsible to keep alive this "intermediate promise".
+	///	`continuation` will always be executed regardless of cancellation state of
+	///	returned subpromise.
 	/// - Returns:
 	///	A continuation subpromise.
 	///	Returned subpromise will be concluded as soon as the "intermediate promise"
@@ -114,11 +117,38 @@ public class Promise<T> {
 				assertMainThread()
 				precondition(intermediatePromise != nil, "Continuation must be called while this promise is alive.")
 				precondition(intermediatePromise!.result != nil, "Continuation must be called after this promise has been concluded.")
-				precondition(subpromise.result == nil)
+				guard subpromise.result == nil else {
+					// Abandon result if cancelled.
+					if let subresult = subpromise.result {
+						if subresult.isCancel {
+							return
+						}
+					}
+					// Otherwise, it's a critical error.
+					fatalError()
+				}
 				subpromise.result = intermediatePromise!.result!
 			}
 		}
 		return subpromise
+	}
+	public func then<U>(continuation: (result: PromiseResult<T>, onComplete: (result: PromiseResult<U>) -> ()) -> ()) -> Promise<U> {
+		return then({ (result: PromiseResult<T>) -> Promise<U> in
+			let subpromise = Promise<U>()
+			let onComplete = { subpromise.result = $0 }
+			continuation(result: result, onComplete: onComplete)
+			return subpromise
+		})
+	}
+	public func then<U>(continuation: (value: T, onComplete: (PromiseResult<U>) -> ()) -> ()) -> Promise<U> {
+		return then({ (value: T) -> Promise<U> in
+			let subpromise = Promise<U>()
+			let onComplete = { (result: PromiseResult<U>) -> () in
+				subpromise.result = result
+			}
+			continuation(value: value, onComplete: onComplete)
+			return subpromise
+		})
 	}
 
 	// MARK: -
@@ -142,10 +172,3 @@ public class Promise<T> {
 //	func cancel()
 //	weak var superpromise: CancellablePromiseType? { get }
 //}
-
-public enum PromiseResult<T> {
-	case Cancel
-	case Error(ErrorType)
-	case Ready(T)
-}
-
