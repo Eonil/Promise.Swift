@@ -38,42 +38,109 @@ class EonilPromiseTests: XCTestCase {
 extension EonilPromiseTests {
 	func test1() {
 		let exp = expectationWithDescription("")
-		Promise(value: ()).thenExecuteUnstoppableOperationInNonMainThread { () -> PromiseResult<Int> in
+		Promise(value: ()).thenExecuteUnstoppableOperationInNonMainThreadOnReady { () -> PromiseResult<Int> in
 			sleep(1)
 			return .Ready(111)
-			} .then { (value: Int) -> Promise<()> in
+			} .thenOnReady { (value: Int) -> Promise<()> in
 				sleep(1)
 				if value == 111 {
 					exp.fulfill()
 				}
 				return Promise(value: ())
 		}
-
-
 		waitForExpectationsWithTimeout(10, handler: { error in
 			XCTAssert(error == nil)
 			XCTAssert(promiseInstanceCount == 0)
 		})
+		XCTAssert(promiseInstanceCount == 0)
 	}
 	func test2() {
 		let exp = expectationWithDescription("A")
-		Promise(value: ()).thenWaitAlways(2).then {
+		Promise(value: ()).thenWaitAlways(0.1).thenOnReady {
 			exp.fulfill()
 		}
 		waitForExpectationsWithTimeout(10) { error in
 			XCTAssert(error == nil)
 			XCTAssert(promiseInstanceCount == 0)
 		}
+		XCTAssert(promiseInstanceCount == 0)
 	}
 	func test3() {
 		let exp = expectationWithDescription("A")
-		Promise(value: ()).thenWaitAlways(1).thenWaitAlways(1).then {
+		Promise(value: ()).thenWaitAlways(0.1).thenWaitAlways(0.1).thenOnReady {
 			exp.fulfill()
 		}
 		waitForExpectationsWithTimeout(10) { error in
 			XCTAssert(error == nil)
 			XCTAssert(promiseInstanceCount == 0)
 		}
+		XCTAssert(promiseInstanceCount == 0)
+	}
+	func test4() {
+		let exp = expectationWithDescription("A")
+		var p1: MutablePromise<()>? = MutablePromise<()>()
+		p1!.thenWaitAlways(0.1).thenOnReady {
+			exp.fulfill()
+		}
+		p1!.result = .Ready(())
+		p1 = nil
+		waitForExpectationsWithTimeout(10) { error in
+			XCTAssert(error == nil)
+			XCTAssert(promiseInstanceCount == 0)
+		}
+		XCTAssert(promiseInstanceCount == 0)
+	}
+	func test4a() {
+		let exp = expectationWithDescription("A")
+		var p1: MutablePromise<()>? = MutablePromise<()>()
+		p1!.then {
+			exp.fulfill()
+		}
+		p1!.cancel()
+		p1 = nil
+		waitForExpectationsWithTimeout(1) { error in
+			XCTAssert(error == nil)
+			XCTAssert(promiseInstanceCount == 0)
+		}
+		XCTAssert(promiseInstanceCount == 0)
+	}
+	func test4b() {
+		let exp = expectationWithDescription("A")
+		var p1: MutablePromise<()>? = MutablePromise<()>()
+		p1!.thenWaitAlways(0.1).then {
+			exp.fulfill()
+		}
+		p1!.cancel()
+		p1 = nil
+		waitForExpectationsWithTimeout(1) { error in
+			XCTAssert(error == nil)
+			XCTAssert(promiseInstanceCount == 0)
+		}
+		XCTAssert(promiseInstanceCount == 0)
+	}
+	func test5() {
+		let exp = expectationWithDescription("A")
+		class MBOX {
+			var p2: MutablePromise<()>?
+			var ok = false
+		}
+		let mbox = MBOX()
+		mbox.p2 = MutablePromise<()>()
+		mbox.p2!.thenWaitAlways(0.1).then { 
+			XCTAssert(mbox.ok)
+			mbox.p2 = nil
+			exp.fulfill()
+		}
+		GCDUtility.delayAndContinueInMainThreadAsynchronously(0.1) {
+			mbox.ok = true
+			mbox.p2!.result = .Ready(())
+		}
+		waitForExpectationsWithTimeout(1) { error in
+			XCTAssert(mbox.p2 == nil)
+			XCTAssert(error == nil)
+			XCTAssert(promiseInstanceCount == 0)
+		}
+		XCTAssert(promiseInstanceCount == 0)
 	}
 }
 

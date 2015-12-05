@@ -49,14 +49,26 @@ public extension Promise {
 //	}
 //}
 public extension Promise {
-	/// Terminates promise chain.
-	public func then(continuation: T -> ()) {
-		_ = then({ (value: T) -> Promise<()> in
+	public func then(continuation: ()->()) {
+		then { (_: PromiseResult<T>) -> () in
+			continuation()
+		}
+	}
+	/// Terminates promise chain regardless of result state.
+	public func then(continuation: PromiseResult<T> -> ()) {
+		_ = then({ (result: PromiseResult<T>) -> Promise<()> in
+			continuation(result)
+			return Promise<()>(value: ())
+		})
+	}
+	/// Terminates promise chain on ready state.
+	public func thenOnReady(continuation: T -> ()) {
+		_ = thenOnReady({ (value: T) -> Promise<()> in
 			continuation(value)
 			return Promise<()>(value: ())
 		})
 	}
-	public func then<U>(continuation: T -> Promise<U>) -> Promise<U> {
+	public func thenOnReady<U>(continuation: T -> Promise<U>) -> Promise<U> {
 		return then({ (result: PromiseResult<T>) -> Promise<U> in
 			switch result {
 			case .Ready(let value):
@@ -126,6 +138,7 @@ extension Promise {
 	/// Waits conditionally.
 	func thenWaitConditionally(durationInSeconds: NSTimeInterval, condition: PromiseResult<T> -> Bool) -> Promise<T> {
 		return then({ (result: PromiseResult<T>) -> Promise<T> in
+			print(result)
 			guard condition(result) else {
 				return Promise(result: result)
 			}
@@ -155,7 +168,7 @@ extension Promise {
 			return subpromise
 		}
 	}
-	public func thenExecuteUnstoppableOperationInNonMainThread<U>(unstoppableNonMainThreadOperation: T->PromiseResult<U>) -> Promise<U> {
+	public func thenExecuteUnstoppableOperationInNonMainThreadOnReady<U>(unstoppableNonMainThreadOperation: T->PromiseResult<U>) -> Promise<U> {
 		return thenExecuteUnstoppableOperationInNonMainThread { (result: PromiseResult<T>) -> PromiseResult<U> in
 			switch result {
 			case .Ready(let value):
@@ -167,7 +180,7 @@ extension Promise {
 			}
 		}
 	}
-	public func thenExecuteUnstoppableOperationInNonMainThread<U>(unstoppableNonMainThreadOperation: T throws -> U) -> Promise<U> {
+	public func thenExecuteUnstoppableOperationInNonMainThreadOnReady<U>(unstoppableNonMainThreadOperation: T throws -> U) -> Promise<U> {
 		return thenExecuteUnstoppableOperationInNonMainThread { (result: PromiseResult<T>) -> PromiseResult<U> in
 			switch result {
 			case .Ready(let value):
@@ -191,7 +204,7 @@ public enum PromiseNSURLRequestError: ErrorType {
 }
 public extension Promise {
 	public func thenExecuteNSURLSessionDataTask(continuation: T throws -> NSURLRequest) -> Promise<NSData> {
-		return then { (value: T) -> Promise<NSData> in
+		return thenOnReady { (value: T) -> Promise<NSData> in
 			let subpromise = Promise<NSData>()
 			do {
 				let request = try continuation(value)
