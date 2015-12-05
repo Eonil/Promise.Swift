@@ -37,40 +37,22 @@ class EonilPromiseTests: XCTestCase {
 
 extension EonilPromiseTests {
 	func test1() {
-		let expect = expectationWithDescription("")
-//		func produceStringFromInt(v: Int) -> Promise<String> {
-//			return PromiseUtility.promiseUnstoppableNonMainThreadExecution({ () -> PromiseResult<String> in
-//				assert(NSThread.isMainThread() == false)
-//				sleep(1)
-//				return .Ready("\(v)ABC")
-//			}).keep()
-//		}
-//		let promise1 = PromiseUtility.promiseUnstoppableNonMainThreadExecution { () -> PromiseResult<Int> in
-//			assert(NSThread.isMainThread() == false)
-//			sleep(1)
-//			return .Ready(111)
-//		}.keep()
-//
-//		promise1.then(produceStringFromInt).then { (result: String) -> Promise<()> in
-//			assert(NSThread.isMainThread() == true)
-//			if result == "111ABC" {
-//				expect.fulfill()
-//			}
-//			return PromiseUtility.promiseOfValue(()).keep()
-//		}
-
-		Promise.ofValue(111).then { (a: Int) -> Promise<String> in
-			let b = "\(a)ABC"
-			return Promise<String>.ofValue(b).keep()
-		}.keep().then { (b: String) -> Promise<()> in
-			print(b)
-			if b == "111ABC" {
-				expect.fulfill()
-			}
-			return Promise<()>.ofValue(()).keep()
-		}.keep()
-
-		waitForExpectationsWithTimeout(10, handler: nil)
+		let exp = expectationWithDescription("")
+		Promise(value: ()).thenExecuteUnstoppableOperationInNonMainThread { () -> PromiseResult<Int> in
+			sleep(1)
+			return .Ready(111)
+			}.then { (value: Int) -> Promise<()> in
+				sleep(1)
+				if value == 111 {
+					exp.fulfill()
+				}
+				return Promise(value: ())
+		}
+		waitForExpectationsWithTimeout(10, handler: { error in
+			XCTAssert(error == nil)
+			XCTAssert(promiseInstanceCount == 0)
+			return ()
+		})
 	}
 }
 
