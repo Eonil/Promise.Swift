@@ -10,6 +10,10 @@
 		454D78001C0FC62F006399F2 /* PromiseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D77FF1C0FC62F006399F2 /* PromiseResult.swift */; };
 		454D78061C0FC995006399F2 /* Cancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D78051C0FC995006399F2 /* Cancellable.swift */; };
 		454D78081C0FCD71006399F2 /* PromiseKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D78071C0FCD70006399F2 /* PromiseKeeper.swift */; };
+		454D780C1C107F48006399F2 /* UtilityFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D780B1C107F48006399F2 /* UtilityFunctions.swift */; };
+		454D78341C11E35D006399F2 /* PromiseUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D78331C11E35D006399F2 /* PromiseUtility.swift */; };
+		454D78361C11E6F5006399F2 /* Weak.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454D78351C11E6F5006399F2 /* Weak.swift */; };
+		456555721C1279E0004686DE /* PromiseUtilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456555711C1279E0004686DE /* PromiseUtilityExtensions.swift */; };
 		459A37E11C0E207C00E7479B /* EonilPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 459A37E01C0E207C00E7479B /* EonilPromise.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		459A37E81C0E207C00E7479B /* EonilPromise.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 459A37DD1C0E207C00E7479B /* EonilPromise.framework */; };
 		459A37ED1C0E207C00E7479B /* EonilPromiseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A37EC1C0E207C00E7479B /* EonilPromiseTests.swift */; };
@@ -32,6 +36,10 @@
 		454D77FF1C0FC62F006399F2 /* PromiseResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseResult.swift; sourceTree = "<group>"; };
 		454D78051C0FC995006399F2 /* Cancellable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cancellable.swift; sourceTree = "<group>"; };
 		454D78071C0FCD70006399F2 /* PromiseKeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseKeeper.swift; sourceTree = "<group>"; };
+		454D780B1C107F48006399F2 /* UtilityFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityFunctions.swift; sourceTree = "<group>"; };
+		454D78331C11E35D006399F2 /* PromiseUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseUtility.swift; sourceTree = "<group>"; };
+		454D78351C11E6F5006399F2 /* Weak.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weak.swift; sourceTree = "<group>"; };
+		456555711C1279E0004686DE /* PromiseUtilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromiseUtilityExtensions.swift; sourceTree = "<group>"; };
 		459A37DD1C0E207C00E7479B /* EonilPromise.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EonilPromise.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		459A37E01C0E207C00E7479B /* EonilPromise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EonilPromise.h; sourceTree = "<group>"; };
 		459A37E21C0E207C00E7479B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -92,8 +100,12 @@
 				454D77FF1C0FC62F006399F2 /* PromiseResult.swift */,
 				454D78071C0FCD70006399F2 /* PromiseKeeper.swift */,
 				459A37F81C0E20B200E7479B /* PromiseHolder.swift */,
+				454D78331C11E35D006399F2 /* PromiseUtility.swift */,
+				456555711C1279E0004686DE /* PromiseUtilityExtensions.swift */,
 				454D78051C0FC995006399F2 /* Cancellable.swift */,
 				459A37FD1C0E20C000E7479B /* GCDUtility.swift */,
+				454D780B1C107F48006399F2 /* UtilityFunctions.swift */,
+				454D78351C11E6F5006399F2 /* Weak.swift */,
 				459A37E21C0E207C00E7479B /* Info.plist */,
 			);
 			path = EonilPromise;
@@ -216,11 +228,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				456555721C1279E0004686DE /* PromiseUtilityExtensions.swift in Sources */,
 				454D78061C0FC995006399F2 /* Cancellable.swift in Sources */,
 				454D78081C0FCD71006399F2 /* PromiseKeeper.swift in Sources */,
+				454D78341C11E35D006399F2 /* PromiseUtility.swift in Sources */,
 				459A37FE1C0E20C000E7479B /* GCDUtility.swift in Sources */,
 				459A37FB1C0E20B200E7479B /* PromiseHolder.swift in Sources */,
+				454D78361C11E6F5006399F2 /* Weak.swift in Sources */,
 				454D78001C0FC62F006399F2 /* PromiseResult.swift in Sources */,
+				454D780C1C107F48006399F2 /* UtilityFunctions.swift in Sources */,
 				459A37FA1C0E20B200E7479B /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -12,7 +12,7 @@ import Foundation
 public class PromiseHolder {
 	public init() {
 	}
-	public func holdUntilDone<T>(promise: Promise<T>) {
+	public func holdUntilConcludeResult<T>(promise: Promise<T>) {
 		precondition(NSThread.isMainThread())
 		let id = ObjectIdentifier(promise)
 		_promises[id] = promise

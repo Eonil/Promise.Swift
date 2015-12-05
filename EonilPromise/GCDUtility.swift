@@ -27,19 +27,39 @@ struct GCDUtility {
 		}
 		return	q
 	}
-	static func dispatchInMainThreadAynchronously(code: ()->()) {
+	static func continueInMainThreadAynchronously(continuation: ()->()) {
 		dispatch_async(dispatch_get_main_queue()) {
-			code()
+			continuation()
 		}
 	}
-	static func dispatchInNonMainThreadAsynchronously(code: ()->()) {
+	static func continueInNonMainThreadAsynchronously(continuation: ()->()) {
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0)) {
 			if NSThread.isMainThread() {
-				dispatchInNonMainThreadAsynchronously(code)
+				continueInNonMainThreadAsynchronously(continuation)
 			}
 			else {
-				code()
+				continuation()
 			}
 		}
 	}
+	static func delayAndContinueInMainThreadAsynchronously(duration: NSTimeInterval, continuation: ()->()) {
+		let time = dispatch_time(DISPATCH_TIME_NOW, Int64(duration * NSTimeInterval(NSEC_PER_SEC)))
+		dispatch_after(time, mainThreadQueue(), continuation)
+	}
+	static func delayAndContinueInNonMainThreadAsynchronously(duration: NSTimeInterval, continuation: ()->()) {
+		let time = dispatch_time(DISPATCH_TIME_NOW, Int64(duration * NSTimeInterval(NSEC_PER_SEC)))
+		dispatch_after(time, nonMainThreadQueue(), continuation)
+	}
 }
+
+//private func _markQueue(queue: dispatch_queue_t) {
+//	dispatch_queue_set_specific(queue, unsafeAddressOf(self), unsafeBitCast(unsafeAddressOf(self), UnsafeMutablePointer<Void>.self), nil)
+//}
+//private func _unmarkQueue(queue: dispatch_queue_t) {
+//	dispatch_queue_set_specific(queue, unsafeAddressOf(self), unsafeBitCast(unsafeAddressOf(self), UnsafeMutablePointer<Void>.self), nil)
+//}
+//private func _checkQueue(queue: dispatch_queue_t) {
+//	guard dispatch_queue_get_specific(queue, unsafeAddressOf(self)) == unsafeAddressOf(self) else {
+//		fatalError()
+//	}
+//}
