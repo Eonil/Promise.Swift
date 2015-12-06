@@ -35,9 +35,7 @@ internal var promiseInstanceCount = 0
 /// itself, so implies its result won't be kept. Promise implies a resulting
 /// value, so you can treat this as a fuzzy state.
 ///
-//public class Promise<T>: CancellablePromiseType {
-public class Promise<T> {
-
+public class Promise<T>: CancellablePromiseType {
 
 	/// Instantiates an unconcluded promise.
 	/// You're responsible to keep this promise alive until it to be 
@@ -53,17 +51,23 @@ public class Promise<T> {
 		precondition(result != nil, "A promise dead before it to be concluded to a result. You SHOULD NOT do this. Always manage promises to conclude to a result.")
 	}
 
-//	/// A reference to super-promise.
-//	/// The only thing you can do on super-promise is cancellation.
-//	public private(set) weak var superpromise: CancellablePromiseType?
+	/// A reference to super-promise.
+	/// The only thing you can do on super-promise is cancellation.
+	private(set) weak var superpromise: CancellablePromiseType?
 
 	/// Cancels this promise.
 	/// Take care that super-promises won't be cancelled by this call.
-	/// If you want to cancel a super-promise, you should find and cancel
-	/// it explicitly from `superpromise` chain.
+	/// If you want to cancel super-promises consider using of
+	/// `cancelToOrigin` method.
 	public final func cancel() {
 		assertMainThread()
 		result = .Cancel
+	}
+
+	/// Cancels every promises up to origin.
+	public func cancelToOrigin() {
+		cancel()
+		superpromise?.cancelToOrigin()
 	}
 
  	/// State of this promise.
@@ -80,7 +84,7 @@ public class Promise<T> {
 				onCancel = nil
 			}
 			for continuation in continuationQueue {
-				continuation()
+				continuation.execution()
 			}
 			continuationQueue = []
 		}
@@ -112,14 +116,14 @@ public class Promise<T> {
 	public final func then<U>(continuation: PromiseResult<T> -> Promise<U>) -> Promise<U> {
 		assertMainThread()
 		let subpromise = Promise<U>()
-//		subpromise.superpromise = self
-		queueContinuation { [weak self, subpromise, continuation] in // Owns `subpromise` and `continuation`.
+		subpromise.superpromise = self
+		queueContinuation(true) { [weak self, subpromise, continuation] in // Owns `subpromise` and `continuation`.
 			assertMainThread()
 			precondition(self != nil, "Continuation must be called while this promise is alive.")
 			precondition(self!.result != nil, "Continuation must be called after this promise has been concluded.")
 			let intermediatePromise = continuation(self!.result!)
-//			subpromise.superpromise = intermediatePromise // Old superpromise has been concluded. Switch over superpromise for cascade cancellation.
-			intermediatePromise.queueContinuation { [weak intermediatePromise, subpromise] in // Also switches over owner. Now intermediate promise owns the subpromise.
+			subpromise.superpromise = intermediatePromise // Old superpromise has been concluded. Switch over superpromise for cascade cancellation.
+			intermediatePromise.queueContinuation(true) { [weak intermediatePromise, subpromise] in // Also switches over owner. Now intermediate promise owns the subpromise.
 				assertMainThread()
 				precondition(intermediatePromise != nil, "Continuation must be called while this promise is alive.")
 				precondition(intermediatePromise!.result != nil, "Continuation must be called after this promise has been concluded.")
@@ -140,23 +144,44 @@ public class Promise<T> {
 	}
 
 	// MARK: -
-	private var continuationQueue: [() -> ()] = [] {
+	private var continuationQueue: [(designation: Bool, execution: () -> ())] = [] {
 		willSet {
 			assertMainThread()
 			precondition(newValue.count == 0 || result == nil, "You can append a continuation only while this promise has not been concluded.")
 		}
+		didSet {
+			assert({
+				var isDes = true
+				for c in continuationQueue {
+					if isDes == false {
+						assert(c.designation == false)
+					}
+					if c.designation == false {
+						isDes = false
+					}
+				}
+				return true
+				}())
+		}
 	}
-	private func queueContinuation(continuation: ()->()){
+	private func queueContinuation(designation: Bool, continuation: ()->()){
 		if let _ = result {
 			continuation()
 		}
 		else {
-			continuationQueue.append(continuation)
+			if designation == true {
+				precondition(continuationQueue.count == 0 || continuationQueue.first!.designation == false, "You can have only one designated continuation to simplify cnacellation prediction.")
+				continuationQueue.insert((designation, continuation), atIndex: 0)
+			}
+			else {
+				continuationQueue.append((designation, continuation))
+			}
 		}
 	}
 }
 
-//public protocol CancellablePromiseType: class {
-//	func cancel()
-//	weak var superpromise: CancellablePromiseType? { get }
-//}
+protocol CancellablePromiseType: class {
+	func cancel()
+	func cancelToOrigin()
+	weak var superpromise: CancellablePromiseType? { get }
+}

@@ -155,6 +155,17 @@ extension Promise {
 	}
 }
 extension Promise {
+	public func waitForPromise<U>(otherPromise: Promise<U>) -> Promise<T> {
+		return then({ (result: PromiseResult<T>) -> Promise<T> in
+			let subpromise = Promise<T>()
+			otherPromise.then({ () -> () in
+				subpromise.result = result
+			})
+			return subpromise
+		})
+	}
+}
+extension Promise {
 	public func thenExecuteUnstoppableOperationInNonMainThread<U>(unstoppableNonMainThreadOperation: PromiseResult<T>->PromiseResult<U>) -> Promise<U> {
 		return then { (result: PromiseResult<T>) -> Promise<U> in
 			let subpromise = Promise<U>()

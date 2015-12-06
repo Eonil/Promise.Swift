@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "F497313302A14451E7879091AA8E8F8544B8C928",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "F0F60AE8AC1983BF695E6B277FC9D15F67D85C8A" : 0,
+    "F497313302A14451E7879091AA8E8F8544B8C928" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "00851932-BD48-4CBF-9794-B049FAD56F22",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "F0F60AE8AC1983BF695E6B277FC9D15F67D85C8A" : "..",
+    "F497313302A14451E7879091AA8E8F8544B8C928" : "Promise.Swift\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "EonilPromise",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "EonilPromise.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/eonil\/cratesiocataloguer2.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F0F60AE8AC1983BF695E6B277FC9D15F67D85C8A"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/Eonil\/Promise.Swift",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F497313302A14451E7879091AA8E8F8544B8C928"
+    }
+  ]
+}
