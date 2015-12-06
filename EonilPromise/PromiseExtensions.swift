@@ -220,21 +220,23 @@ public extension Promise {
 			do {
 				let request = try continuation(value)
 				let onComplete = { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
-					if let error = error {
-						if error.code == NSURLErrorCancelled {
-							subpromise.result = .Cancel
+					GCDUtility.continueInMainThreadAynchronously {
+						if let error = error {
+							if error.code == NSURLErrorCancelled {
+								subpromise.result = .Cancel
+								return
+							}
+							subpromise.result = .Error(error)
 							return
 						}
+						if let data = data {
+							subpromise.result = .Ready(data)
+							return
+						}
+						let error = PromiseNSURLRequestError.CompleteWithNoErrorAndNoData(request: request, response: response)
 						subpromise.result = .Error(error)
 						return
 					}
-					if let data = data {
-						subpromise.result = .Ready(data)
-						return
-					}
-					let error = PromiseNSURLRequestError.CompleteWithNoErrorAndNoData(request: request, response: response)
-					subpromise.result = .Error(error)
-					return
 				}
 				let task = NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: onComplete)
 				subpromise.onCancel = { [task] in
